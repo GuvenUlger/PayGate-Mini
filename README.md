@@ -40,6 +40,7 @@ docker run -d -p 8080:8080 --name paygate-container paygate-mini:latest
 ```
 
 **API Kullanımı**
+
 Uygulama çalıştıktan sonra 8080 portu üzerinden istekleri dinlemeye başlar.
 
 İstek Adresi: POST /api/v1/pay
