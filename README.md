@@ -27,14 +27,17 @@ Projeyi bilgisayarınıza indirip Docker ile hemen ayağa kaldırmak için aşa�
 ```bash
 git clone [https://github.com/GuvenUlger/PayGate-Mini.git](https://github.com/GuvenUlger/PayGate-Mini.git)
 cd PayGate-Mini
+```
 
 **2.Docker Paketini Oluşturun**
 ```bash
 docker build -t paygate-mini:latest .
+```
 
 **3. Uygulamayı Başlatın**
 ```bash
 docker run -d -p 8080:8080 --name paygate-container paygate-mini:latest
+```
 
 ** API Kullanımı **
 Uygulama çalıştıktan sonra 8080 portu üzerinden istekleri dinlemeye başlar.
