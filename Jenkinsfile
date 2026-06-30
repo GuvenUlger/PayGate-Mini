@@ -1,30 +1,32 @@
 pipeline {
     agent any
+
     stages {
-        stage('1.Kodu GitHub\'dan Çek'){
+        stage('1. Kodu GitHub\'dan Çek') {
             steps {
-                echo 'GitHub\'daki en güncel kodlar Jenkins çalışma alanına indiriliyor...'
+                echo 'Kodlar indiriliyor...'
                 checkout scm
             }
         }
 
-        stage('2. Otomatik Testleri Çalıştır (PyTest)') {
+        stage('2. Docker Imajını Derle') {
             steps {
-                echo 'Ödeme motorunun kuralları test ediliyor...'
-                sh 'python -m pytest test_app.py'
-            }
-        }
-
-        stage('3. Docker Imajını Yeniden Derle') {
-            steps {
-                echo 'Testler başarıyla geçti! Yeni Docker imajı başlıyor...'
+                echo 'Uygulama ve testleri içeren Docker imajı basılıyor...'
                 sh 'docker build -t paygate-mini:latest .'
             }
         }
 
-        stage('4. Canlı Ortama Dağıt (Depoloy)') {
+        stage('3. Testleri Docker İçinde Koştur') {
             steps {
-                echo 'Eski çalışan konteyner varsa durduruluyor ve yenisi ayağa kaldırılıyor...'
+                echo 'Ödeme motoru kuralları izole Docker konteyneri içinde test ediliyor...'
+                // İmajın içindeki pytest'i tetikliyoruz. Geçici bir konteyner açıp test bitince silecek (--rm)
+                sh 'docker run --rm paygate-mini:latest python -m pytest test_app.py'
+            }
+        }
+
+        stage('4. Canlı Ortama Dağıt (Deploy)') {
+            steps {
+                echo 'Eski çalışan konteyner temizleniyor ve yenisi ayağa kaldırılıyor...'
                 sh 'docker stop paygate-container || true'
                 sh 'docker rm paygate-container || true'
                 sh 'docker run -d -p 8080:8080 --name paygate-container paygate-mini:latest'
@@ -34,10 +36,10 @@ pipeline {
 
     post {
         success {
-            echo 'Tebrikler CI/CD hattı başarıyla tamamlandı! Ödeme sistemi yayında.'
+            echo '🎉 Tebrikler Güven! CI/CD hattı başarıyla tamamlandı. Ödeme sistemi yayında!'
         }
         failure {
-            echo 'Hata oluştu! Lütfen logları kontrol edin ve hatayı düzeltin.'
+            echo '❌ Bir şeyler ters gitti! Logları incele.'
         }
     }
 }
