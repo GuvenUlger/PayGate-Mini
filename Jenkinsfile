@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('1. Kodu GitHub\'dan Çek') {
             steps {
-                echo 'Kodlar indiriliyor...'
-                checkout scm
+                echo 'GitHub\'dan en güncel kodlar çekiliyor...'
+                git branch: 'main', url: 'https://github.com/GuvenUlger/PayGate-Mini.git'
             }
         }
 
@@ -35,10 +35,10 @@ pipeline {
 
     post {
         success {
-            echo '🎉 Tebrikler Güven! CI/CD hattı başarıyla tamamlandı. Ödeme sistemi yayında!'
+            echo 'CI/CD hattı başarıyla tamamlandı. Ödeme sistemi yayında!'
         }
         failure {
-            echo '❌ Bir şeyler ters gitti! Logları incele.'
+            echo '❌ Bir şeyler ters gitti!'
         }
     }
 }
